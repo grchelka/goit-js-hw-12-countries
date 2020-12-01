@@ -1,6 +1,8 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const SpriteLoaderPlugin = require("svg-sprite-loader/plugin");
+const Handlebars = require("handlebars");
+const debounce = require("lodash.debounce");
 
 module.exports = {
   entry: {
