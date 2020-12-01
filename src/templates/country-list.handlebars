@@ -1,9 +1,5 @@
-{{#each this}}
-<div class="country-card">
-    <ul class="country-list">
-        {{#each name}}
-        <li class="language">{{name}}</li>
-        {{/each}}
-    </ul>
-</div>
-{{#each this}}
+<ul class="country-list">
+    {{#each this}}
+    <li class="language">{{this.name}}</li>
+    {{/each}}
+</ul>

@@ -1,39 +1,43 @@
 import "./css/styles.css";
-const debounce = require("lodash.debounce");
 import countryCardTpl from "./templates/country-card.handlebars";
 import countryListTpl from "./templates/country-list.handlebars";
 import API from "./js/fetchCountries.js";
+const debounce = require("lodash.debounce");
 
 const refs = {
-  searchForm: document.querySelector(".js-search"),
+  searchInput: document.querySelector(".js-search-input"),
   cardContainer: document.querySelector(".js-card-container"),
 };
 
-refs.searchForm.addEventListener("submit", debounce(onSearch, 500));
+refs.searchInput.addEventListener("input", debounce(onSearch, 500));
 
 function onSearch(event) {
-  event.preventDefault();
-
-  const form = event.currentTarget;
-  const searchQuery = form.elements.query.value;
-
-  API(searchQuery)
-    .then(renderCountryCard)
-    .catch(onFetchError)
-    .finally(() => form.reset());
+  const searchQuery = event.target.value;
+  if (searchQuery) {
+    API.fetchCountries(searchQuery).then(renderResponse).catch(onFetchError);
+  }
+}
+function renderResponse(response) {
+  if (response.length === 1) {
+    renderCountryCard(response[0]);
+  } else if (response.length >= 2 && response.length <= 10) {
+    renderCountryList(response);
+  } else {
+    refs.cardContainer.innerHTML = "";
+    console.log("too many countries are found");
+  }
 }
 
 function renderCountryCard(country) {
+  console.log(country);
   const markup = countryCardTpl(country);
-  if (country.length === 1) {
-    refs.cardContainer.innerHTML = markup;
-  } else if (country.length >= 2 && country.length <= 10) {
-    console.log("it is a list of 10 countries");
-    const markup = countryListTpl(country);
-    refs.cardContainer.innerHTML = markup;
-  } else if (country.length > 10) {
-    console.log("too many");
-  }
+  refs.cardContainer.innerHTML = markup;
+}
+
+function renderCountryList(countries) {
+  const markup = countryListTpl(countries);
+  refs.cardContainer.innerHTML = markup;
+  console.log("it is a list of ten countries");
 }
 
 function onFetchError(error) {
