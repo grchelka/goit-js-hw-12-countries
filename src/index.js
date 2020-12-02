@@ -1,4 +1,7 @@
 import "./css/styles.css";
+import { alert, notice, info, success, error } from "@pnotify/core";
+import "@pnotify/core/dist/PNotify.css";
+import "@pnotify/core/dist/BrightTheme.css";
 import countryCardTpl from "./templates/country-card.handlebars";
 import countryListTpl from "./templates/country-list.handlebars";
 import API from "./js/fetchCountries.js";
@@ -17,6 +20,7 @@ function onSearch(event) {
     API.fetchCountries(searchQuery).then(renderResponse).catch(onFetchError);
   }
 }
+
 function renderResponse(response) {
   if (response.length === 1) {
     renderCountryCard(response[0]);
@@ -24,7 +28,15 @@ function renderResponse(response) {
     renderCountryList(response);
   } else {
     refs.cardContainer.innerHTML = "";
-    console.log("too many countries are found");
+    alert({
+      text: "Too many matches found. Please, enter a more specific query.",
+      type: "info",
+      delay: 1000,
+      closer: false,
+      sticker: false,
+      hide: true,
+      autoOpen: true,
+    });
   }
 }
 
@@ -37,10 +49,8 @@ function renderCountryCard(country) {
 function renderCountryList(countries) {
   const markup = countryListTpl(countries);
   refs.cardContainer.innerHTML = markup;
-  console.log("it is a list of ten countries");
 }
 
 function onFetchError(error) {
-  alert("Error, result isn't found");
-  console.log(error);
+  alert("Not found");
 }
